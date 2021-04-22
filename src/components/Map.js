@@ -1,10 +1,12 @@
 /* eslint-disable no-unused-vars */
 import React, { useRef, useEffect, useState } from 'react'
-import mapboxgl from 'mapbox-gl'
-import MapboxDraw from '@mapbox/mapbox-gl-draw'
-import { getIntersections, createGeoJSON, createLineLayer } from '../functions/Geometry'
+//Packages
 import Typography from '@material-ui/core/Typography'
 import Slider from '@material-ui/core/Slider'
+import mapboxgl from 'mapbox-gl'
+import MapboxDraw from '@mapbox/mapbox-gl-draw'
+//Functions
+import { getIntersections, createGeoJSON, createLineLayer } from '../functions/Geometry'
 
 mapboxgl.accessToken =
   'pk.eyJ1IjoiemVreSIsImEiOiJja25tdGdiMnQwN3ZqMm5sYWh2dHU0bjRtIn0.DQ355eGSSydRc9WWwMD2SA'
@@ -31,7 +33,7 @@ const Map = () => {
       displayControlsDefault: false,
       controls: {
         polygon: !allow,
-        trash: true
+        trash: !allow
       },
       //defaultMode: 'draw_polygon'
     })
@@ -119,7 +121,7 @@ const Map = () => {
         <Slider aria-labelledby="continuous-slider" value={length} onChange={handleLength} max={10}/>
       </div>
       <div className='sidebarStyle'>
-        <span>Disable move before drawing a polygon</span>
+        <span>Disable move to be able to draw a polygon</span>
         <span id='allow-button-span'>
           <button onClick={allowMove}>move {` | ${allow ? 'on' : 'off'}`}</button>
         </span>
