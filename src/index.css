@@ -55,6 +55,7 @@ code {
   flex-direction: row;
   justify-content: center;
   color: black;
+  font-weight: normal;
 }
 
 #slider-container{
