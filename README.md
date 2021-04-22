@@ -2,7 +2,7 @@
 
 - git clone to your local directory
 
-- remove .git file
+- remove the .git file
 
 - npm install to get all the packages
 
