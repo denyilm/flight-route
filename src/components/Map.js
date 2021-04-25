@@ -6,40 +6,81 @@ import Slider from '@material-ui/core/Slider'
 import mapboxgl from 'mapbox-gl'
 import MapboxDraw from '@mapbox/mapbox-gl-draw'
 //Functions
-import { getIntersections, createGeoJSON, createLineLayer } from '../functions/Geometry'
+import { getIntersections, createGeoJSON, createLineLayer, createFeatureCollection, getResults, add3DTerrain } from '../functions/Geometry'
+import ControlBar from './ControlBar'
+import Route from './Route'
 
 mapboxgl.accessToken =
   'pk.eyJ1IjoiemVreSIsImEiOiJja25tdGdiMnQwN3ZqMm5sYWh2dHU0bjRtIn0.DQ355eGSSydRc9WWwMD2SA'
 
-const Map = () => {
+const Map = (props) => {
   const mapContainerRef = useRef(null)
-  const [length, setLength] = useState(3)
-  const [allow, setAllow] = useState(true)
+  const [canDraw, setCanDraw] = useState(false)
+
+  const [pickedRoute, setPickedRoute] = useState({})
+  const [length, setLength] = useState(0)
+  const [width, setWidth] = useState(0)
+  const [modifiedPickedRoute, setModifiedPickedRoute] = useState({})
+  const [sourceId, setSourceId] = useState('')
 
   const [lng, setLng] = useState(32)
   const [lat, setLat] = useState(40)
-  const [zoom, setZoom] = useState(5)
+  const [swLng, setSwLng] = useState()
+  const [swLat, setSwLat] = useState()
+  const [neLng, setNeLng] = useState()
+  const [neLat, setNeLat] = useState()
+  const [zoom, setZoom] = useState(4)
 
   // Initialize map when component mounts
   useEffect(() => {
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
-      style: 'mapbox://styles/mapbox/streets-v11',
-      center: [32, 40],
+      style: 'mapbox://styles/mapbox/satellite-v9',
+      center: [lng, lat],
       zoom: zoom
     })
 
     let draw = new MapboxDraw({
       displayControlsDefault: false,
       controls: {
-        polygon: !allow,
-        trash: !allow
+        polygon: canDraw,
+        trash: canDraw
       },
       //defaultMode: 'draw_polygon'
     })
 
+    if(Object.keys(props.route).length > 0){
+      setPickedRoute(props.route)
+      let newLng = props.route.geometry.coordinates[0][0][0]
+      let newLat = props.route.geometry.coordinates[0][0][1]
+
+      //get length and width with a function instead
+      setLength(props.length)
+      //setWidth(width)
+
+      map.setCenter([newLng, newLat])
+      setLng(newLng)
+      setLat(newLat)
+      setSourceId(`route-${props.route.id}`)
+    }
+
+    map.on('move', () => {
+      setLng(map.getCenter().lng.toFixed(3))
+      setLat(map.getCenter().lat.toFixed(3))
+      setZoom(map.getZoom().toFixed(2))
+      setSwLng(map.getBounds()._sw.lng.toFixed(3))
+      setSwLat(map.getBounds()._sw.lat.toFixed(3))
+      setNeLng(map.getBounds()._ne.lng.toFixed(3))
+      setNeLat(map.getBounds()._ne.lat.toFixed(3))
+    })
+
     //call the function that outputs the results when the polygon is drawn
-    map.on('draw.create', () => getResults())
+    map.on('draw.create', () => getResults(map, sourceId, draw))
+
+    //3D Terrain
+    //https://docs.mapbox.com/mapbox-gl-js/example/add-terrain/
+    add3DTerrain(map)
+    //3D Terrain ends
 
     // Add navigation control (the +/- zoom buttons)
     map.addControl(new mapboxgl.NavigationControl(), 'top-right')
@@ -47,86 +88,104 @@ const Map = () => {
 
     // A geojson object consisting of two parallel lines
     map.on('load', function () {
-      //coordinations
-      let initialCoord = [
-        [[lng, lat], [lng+length, lat]],
-        [[lng, lat-3], [lng+length, lat-3]]
-      ]
-      //data in the from of geojson
-      let data = createGeoJSON('', 'MultiLineString', initialCoord)
-      map.addSource('route', {
-        'type': 'geojson',
-        'data': data
+      setSwLng(map.getBounds()._sw.lng.toFixed(4))
+      setSwLat(map.getBounds()._sw.lat.toFixed(4))
+      setNeLng(map.getBounds()._ne.lng.toFixed(4))
+      setNeLat(map.getBounds()._ne.lat.toFixed(4))
+      //setCenterInitially
+      if(props.data.length > 0 && Object.keys(props.route).length === 0){
+        let newLng = props.data[0].geometry.coordinates[0][0][0]
+        let newLat = props.data[0].geometry.coordinates[0][0][1]
+        map.setCenter([newLng, newLat])
+        setLng(newLng)
+        setLat(newLat)
+      }
+      //add the sources draw the layers
+      props.data.forEach(feature => {
+        map.addSource(`route-${feature.id}`, {
+          'type': 'geojson',
+          'data': feature
+        })
+        let layerObj
+        if(props.route && props.route.id === feature.id){
+          layerObj = createLineLayer(`layer-${feature.id}`, `route-${feature.id}`, 'yellow', 5)
+        } else {
+          layerObj = createLineLayer(`layer-${feature.id}`, `route-${feature.id}`, 'magenta', 5)
+        }
+        map.addLayer(layerObj)
+        let popup
+        map.on('mouseenter', `layer-${feature.id}`, e => {
+          map.getCanvas().style.cursor = 'pointer'
+          popup = new mapboxgl.Popup()
+            .setLngLat(e.lngLat)
+            .setHTML(e.features[0].layer.source)
+            .addTo(map)
+        })
+        /*
+        map.on('mouseenter', `layer-${feature.id}`, function () {
+          map.getCanvas().style.cursor = 'pointer'
+        })
+        */
+        map.on('mouseleave', `layer-${feature.id}`, function () {
+          map.getCanvas().style.cursor = ''
+          popup.remove()
+        })
       })
-      //create layer
-      let layerObj = createLineLayer('route-layer', 'route', 'black', 5)
-      map.addLayer(layerObj)
     })
     //
 
     // The object moves as you click arround if it is allowed
     map.on('click', e => {
-      let newLng = e.lngLat.lng
-      let newLat = e.lngLat.lat
-      let newCoord = [
-        [[newLng, newLat], [newLng+length, newLat]],
-        [[newLng, newLat-3], [newLng+length, newLat-3]]
-      ]
-      let data = createGeoJSON('', 'MultiLineString', newCoord)
-      if(allow){
-        map.getSource('route').setData(data)
-        setLng(newLng)
-        setLat(newLat)
+      let newLng = Number(e.lngLat.lng.toFixed(3))
+      let newLat = Number(e.lngLat.lat.toFixed(3))
+      //console.log(routeId)
+      if(Object.keys(pickedRoute).length > 0 && !canDraw){
+        let newCoord = [
+          [[newLng, newLat], [newLng+length, newLat]],
+          [[newLng, newLat+width], [newLng+length, newLat+width]]
+        ]
+        let data = createGeoJSON('', 'MultiLineString', newCoord)
+        let routeId = `route-${pickedRoute.id}`
+        //console.log(map.getSource(routeId))
+        map.getSource(routeId).setData(data)
+        let pickedRoute_edited =  map.getSource(routeId)._data
+        pickedRoute_edited.id = pickedRoute.id
+        console.log(pickedRoute_edited)
+        setModifiedPickedRoute(pickedRoute_edited)
       }
     })
     //
 
-    //output the filtered lines and add a layer to show them on the map
-    const getResults = () => {
-      let source = map.getSource('route')
-      let multiLineArr = source._data.geometry.coordinates
-      let polyArr = draw.getAll().features[0].geometry.coordinates
-      let coordArr = getIntersections(multiLineArr, polyArr)
-      let geoJSONresults = createGeoJSON('filtered lines','MultiLineString', coordArr)
-      console.log('filtered lines: ', geoJSONresults)
-      map.addSource('ints', {
-        'type': 'geojson',
-        'data': geoJSONresults
-      })
-      let filteredLinesLayer = createLineLayer('filtered-lines-layer', 'ints', 'red', 5)
-      map.addLayer(filteredLinesLayer)
-    }
-    //
-
     // Clean up on unmount
     return () => map.remove()
-  }, [allow, length]) //
+  }, [canDraw, props.data, pickedRoute]) //
 
-  //
   const handleLength = (event, newLength) => setLength(newLength)
-  //
 
   //
-  const allowMove = (event) => setAllow(!allow)
+  //const allowMove = (event) => setAllow(!allow)
   //
+  const handleDrawSwitch = (event) => setCanDraw(!canDraw)
 
   //Render the Map
   return (
-    <div>
-      <div id='slider-container'>
-        <Typography id="continuous-slider" gutterBottom>
-          Length [longitude] |
-          <span>{` ${length}`}</span>
-        </Typography>
-        <Slider aria-labelledby="continuous-slider" value={length} onChange={handleLength} max={10}/>
-      </div>
-      <div className='sidebarStyle'>
-        <span>Disable move to be able to draw a polygon</span>
-        <span id='allow-button-span'>
-          <button onClick={allowMove}>move {` | ${allow ? 'on' : 'off'}`}</button>
-        </span>
+    <div id='map-page-container'>
+      <div className="sidebar-map">
+        <span>SW: {swLng} | {swLat}</span>
+        <span>NE: {neLng} | {neLat}</span>
+        <span>C : {lng} | {lat}</span>
       </div>
       <div className='map-container' ref={mapContainerRef} />
+      <ControlBar
+        handleSave={props.handleSave(modifiedPickedRoute)}
+        modified={modifiedPickedRoute}
+        handleEmpty={props.handleEmpty}
+        pickedRoute={props.route}
+        handleDrawSwitch={handleDrawSwitch}
+        canDraw={canDraw}
+        length={props.length}
+        handleLength={props.handleLength}
+      />
     </div>
   )
 }

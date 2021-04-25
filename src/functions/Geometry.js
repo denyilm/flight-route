@@ -52,6 +52,14 @@ export const createGeoJSON = (name, geoType, coordArr) => {
 }
 //
 
+export const createFeatureCollection = (features) => {
+  let featureCollection  = {
+    'type': 'FeatureCollection',
+    'features': features
+  }
+  return featureCollection
+}
+
 //
 export const createLineLayer = (id, source, color, width) => {
   let layerObj = {
@@ -65,4 +73,43 @@ export const createLineLayer = (id, source, color, width) => {
     }
   }
   return layerObj
+}
+
+export const getResults = (map, sourceId, draw) => {
+  let source = map.getSource(sourceId)
+  let multiLineArr = source._data.geometry.coordinates
+  let polyArr = draw.getAll().features[0].geometry.coordinates
+  let coordArr = getIntersections(multiLineArr, polyArr)
+  let geoJSONresults = createGeoJSON('filtered lines','MultiLineString', coordArr)
+  console.log(`filtered lines for ${sourceId}: `, geoJSONresults)
+  map.addSource('ints', {
+    'type': 'geojson',
+    'data': geoJSONresults
+  })
+  let filteredLinesLayer = createLineLayer('filtered-lines-layer', 'ints', 'red', 5)
+  map.addLayer(filteredLinesLayer)
+}
+
+export const add3DTerrain = (map) => {
+  map.on('load', function () {
+    map.addSource('mapbox-dem', {
+      'type': 'raster-dem',
+      'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
+      'tileSize': 512,
+      'maxzoom': 14
+    })
+    // add the DEM source as a terrain layer with exaggerated height
+    map.setTerrain({ 'source': 'mapbox-dem', 'exaggeration': 1.5 })
+
+    // add a sky layer that will show when the map is highly pitched
+    map.addLayer({
+      'id': 'sky',
+      'type': 'sky',
+      'paint': {
+        'sky-type': 'atmosphere',
+        'sky-atmosphere-sun': [0.0, 0.0],
+        'sky-atmosphere-sun-intensity': 15
+      }
+    })
+  })
 }

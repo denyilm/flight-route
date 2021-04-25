@@ -12,41 +12,154 @@ code {
     monospace;
 }
 
+button {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  border: 1px solid black;
+  border-radius: 3px;
+  background-color: whitesmoke
+}
+
+input {
+  width: 180px;
+}
+
 /*
+App
+*/
 .main-page-container{
+  margin-top: 100px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 100%;
-  height: 100%;
 }
+
+#map-form-routes-container{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+#app-form-routes-container {
+  margin-left: 2px;
+}
+
+/*
+App ends
 */
 
-
-.map-container {
-  height: 90%;
-  width: 100%;
-  top: 100;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  position: absolute;
+/*
+AddLines
+*/
+#add-lines-main-container {
+  border: 2px solid black;
+  padding: 3px;
 }
 
-.sidebarStyle {
+#add-lines-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 3px;
+}
+
+#add-lines-form {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  position: absolute;
-  margin: 12px;
-  margin-top: 100px;
-  background-color: #404040;
-  color: #ffffff;
-  z-index: 1 !important;
-  padding: 6px;
-  font-weight: bold;
 }
+
+.add-line-input-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 2px;
+}
+/*
+AddLines ends
+*/
+
+/*
+Routes
+*/
+#main-routes-container {
+  border: solid 2px black;
+  margin-top: 3px;
+  padding: 2px;
+  display: flex;
+  height: 340px;
+  min-width: 300px;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  overflow: auto
+}
+/*
+Routes ends
+*/
+
+/*
+Route
+*/
+.route-container {
+  padding: 2px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  border: 1px solid black;
+  width: 300px;
+  margin-bottom: 2px;
+}
+
+.route-properties-container{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.route-button {
+  width: 135px;
+  margin: 1px;
+}
+
+.route-buttons-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  width: 100%;
+}
+
+/*
+Route ends
+*/
+
+/*
+Map
+*/
+
+.map-container {
+  height: 540px;
+  width: 960px;
+}
+
+.sidebar-map {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: rgba(35, 55, 75, 0.9);
+  color: #ffffff;
+  padding: 6px 12px;
+  font: 15px/24px monospace;
+  z-index: 2;
+  position: absolute;
+  margin-top: 5px;
+  margin-left: 5px;
+  }
 
 #allow-button-span {
   width: fit-content;
@@ -60,8 +173,61 @@ code {
 
 #slider-container{
   width: 200px;
-  position: absolute;
   left: 50%;
   right: 50%;
   top: 25px;
+}
+/*
+Map Ends
+*/
+
+/*
+ControlBar
+*/
+#main-control-bar-container{
+  margin-top: 5px;
+  width: 960px;
+  height: 200px;
+  border: 1px solid black;
+}
+
+#control-bar-route-info-container{
+  height: 141px;
+  width: 480px;
+}
+
+#control-bar-buttons-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 1px;
+}
+
+#info-controls-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  border-top: solid 1px black;
+  border-bottom: solid 1px black;
+}
+
+#controls-container {
+  display: flex;
+  flex-direction: column;
+  width: 350px;
+  background-color: lightgreen;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.slider-container {
+  width: 300px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.slider-tag {
+  margin-right: 10px;
 }
