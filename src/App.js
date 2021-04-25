@@ -63,6 +63,8 @@ const App = () => {
       .then(res => {
         setLatestId(route.id-1)
         setPickedRoute({})
+        setLength('')
+        setWidth('')
       })
   }
   //

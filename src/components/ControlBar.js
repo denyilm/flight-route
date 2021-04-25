@@ -2,15 +2,42 @@
 import React from 'react'
 import Switch from '@material-ui/core/Switch'
 import { Slider } from '@material-ui/core'
+import _ from 'lodash'
 
 const ControlBar = (props) => {
   return (
     <div id='main-control-bar-container'>
-      <span id='add-lines-header'>Control Panel</span>
+      <span id='add-lines-header'>{ Object.keys(props.pickedRoute).length > 0
+        ? `route-${props.pickedRoute.id}`
+        : 'Select a route'}</span>
       <div id='info-controls-wrapper'>
         <div id='control-bar-route-info-container'>
-          <span>{ Object.keys(props.pickedRoute).length > 0 ? `route-${props.pickedRoute.id}` : 'Select a route'}</span>
-          <span></span>
+          <div id='control-bar-original-router-container'>
+            {
+              Object.keys(props.pickedRoute).length === 0
+                ? null
+                :
+                <div className='control-bar-route-properties-container'>
+                  <span className='control-bar-mini-header'>Original route properties</span>
+                  <span>{`origin: [ ${props.pickedRoute.geometry.coordinates[0][0][0]} , ${props.pickedRoute.geometry.coordinates[0][0][1]} ] `}</span>
+                  <span>{`length: ${Math.round(props.pickedRoute.geometry.coordinates[0][1][0] - props.pickedRoute.geometry.coordinates[0][0][0])} 
+                  | width: ${Math.round(props.pickedRoute.geometry.coordinates[1][0][1] - props.pickedRoute.geometry.coordinates[0][0][1])}`}</span>
+                </div>
+            }
+          </div>
+          <div id='control-bar-modified-route-container' >
+            {
+              Object.keys(props.modified).length === 0 || Object.keys(props.pickedRoute).length === 0
+                ? null
+                :
+                <div className='control-bar-route-properties-container' style={{ backgroundColor: _.isEqual(props.modified, props.pickedRoute) ? 'lightgreen' : 'lightsalmon' }}>
+                  <span className='control-bar-mini-header'>Modified route properties</span>
+                  <span>{`origin: [ ${props.modified.geometry.coordinates[0][0][0]} , ${props.modified.geometry.coordinates[0][0][1]} ] `}</span>
+                  <span>{`length: ${Math.round(props.modified.geometry.coordinates[0][1][0] - props.modified.geometry.coordinates[0][0][0])} 
+                  | width: ${Math.round(props.modified.geometry.coordinates[1][0][1] - props.modified.geometry.coordinates[0][0][1])}`}</span>
+                </div>
+            }
+          </div>
         </div>
         { Object.keys(props.pickedRoute).length > 0
           ?
@@ -36,8 +63,20 @@ const ControlBar = (props) => {
         }
       </div>
       <div id='control-bar-buttons-container'>
-        <button className='route-button' onClick={ Object.keys(props.modified).length > 0 ? props.handleSave : () => console.log('no change')}>save</button>
-        <button className='route-button' onClick={props.handleEmpty}>empty</button>
+        {
+          _.isEqual(props.modified, props.pickedRoute)
+            ?
+            null
+            :
+            <button className='route-button' onClick={ Object.keys(props.modified).length > 0 &&  !_.isEqual(props.modified, props.pickedRoute) ? props.handleSave : () => console.log('no change')}>save</button>
+        }
+        {
+          Object.keys(props.pickedRoute) === 0
+            ?
+            null
+            :
+            <button className='route-button' onClick={props.handleEmpty}>empty</button>
+        }
       </div>
     </div>
   )

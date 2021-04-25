@@ -100,6 +100,7 @@ const Map = (props) => {
         setLng(newLng)
         setLat(newLat)
       }
+
       //add the sources draw the layers
       props.data.forEach(feature => {
         map.addSource(`route-${feature.id}`, {
@@ -114,6 +115,7 @@ const Map = (props) => {
         }
         map.addLayer(layerObj)
         let popup
+
         map.on('mouseenter', `layer-${feature.id}`, e => {
           map.getCanvas().style.cursor = 'pointer'
           popup = new mapboxgl.Popup()
@@ -121,16 +123,14 @@ const Map = (props) => {
             .setHTML(e.features[0].layer.source)
             .addTo(map)
         })
-        /*
-        map.on('mouseenter', `layer-${feature.id}`, function () {
-          map.getCanvas().style.cursor = 'pointer'
-        })
-        */
+
         map.on('mouseleave', `layer-${feature.id}`, function () {
           map.getCanvas().style.cursor = ''
           popup.remove()
         })
       })
+
+      //Update the length of the picked route
       if(Object.keys(props.route).length > 0){
         let pickedRoute_edited = map.getSource(sourceId)._data
         let oldLng = pickedRoute_edited.geometry.coordinates[0][0][0]
@@ -150,7 +150,7 @@ const Map = (props) => {
     })
     //
 
-    // The object moves as you click arround if it is allowed
+    // The object moves as you click arround
     map.on('click', e => {
       let newLng = Number(e.lngLat.lng.toFixed(3))
       let newLat = Number(e.lngLat.lat.toFixed(3))

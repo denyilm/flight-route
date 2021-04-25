@@ -193,7 +193,23 @@ ControlBar
 
 #control-bar-route-info-container{
   height: 141px;
-  width: 480px;
+  width: 600px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+#control-bar-original-router-container{
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  padding: 4px;
+}
+
+#control-bar-modified-route-container{
+  width: 300px;
+  display: flex;
+  flex-direction: column;
 }
 
 #control-bar-buttons-container {
@@ -215,8 +231,7 @@ ControlBar
 #controls-container {
   display: flex;
   flex-direction: column;
-  width: 350px;
-  background-color: lightgreen;
+  width: 360px;
   justify-content: space-evenly;
   align-items: center;
 }
@@ -234,4 +249,22 @@ ControlBar
 
 .slider-value{
   margin-left: 10px;
+}
+
+.control-bar-route-properties-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  height: 100%;
+  padding: 4px;
+}
+
+.control-bar-mini-header{
+  margin-bottom: 3px;
+  width: 300px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  font-weight: bold;
 }
