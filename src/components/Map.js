@@ -75,7 +75,11 @@ const Map = (props) => {
     })
 
     //call the function that outputs the results when the polygon is drawn
-    map.on('draw.create', () => getResults(map, sourceId, draw))
+    map.on('draw.create', () => {
+      if(Object.keys(props.route).length > 0){
+        getResults(map, sourceId, draw)
+      }
+    })
 
     //3D Terrain
     //https://docs.mapbox.com/mapbox-gl-js/example/add-terrain/

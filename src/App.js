@@ -72,12 +72,14 @@ const App = () => {
   //
   const handleSelect = (route) => (event) => {
     //console.log(route)
-    setPickedRoute(route)
-    //get length and width with a function instead
-    let length = route.geometry.coordinates[0][1][0] - route.geometry.coordinates[0][0][0]
-    let width = route.geometry.coordinates[1][0][1] - route.geometry.coordinates[0][0][1]
-    setLength(length)
-    setWidth(width)
+    if(pickedRoute.id !== route.id){
+      setPickedRoute(route)
+      //get length and width with a function instead
+      let length = route.geometry.coordinates[0][1][0] - route.geometry.coordinates[0][0][0]
+      let width = route.geometry.coordinates[1][0][1] - route.geometry.coordinates[0][0][1]
+      setLength(length)
+      setWidth(width)
+    }
   }
   //
 

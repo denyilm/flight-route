@@ -64,14 +64,14 @@ const ControlBar = (props) => {
       </div>
       <div id='control-bar-buttons-container'>
         {
-          _.isEqual(props.modified, props.pickedRoute)
+          _.isEqual(props.modified, props.pickedRoute) || Object.keys(props.pickedRoute).length === 0
             ?
             null
             :
             <button className='route-button' onClick={ Object.keys(props.modified).length > 0 &&  !_.isEqual(props.modified, props.pickedRoute) ? props.handleSave : () => console.log('no change')}>save</button>
         }
         {
-          Object.keys(props.pickedRoute) === 0
+          Object.keys(props.pickedRoute).length === 0
             ?
             null
             :
