@@ -98,8 +98,9 @@ const Map = (props) => {
       setNeLat(map.getBounds()._ne.lat.toFixed(4))
       //setCenterInitially
       if(props.data.length > 0 && Object.keys(props.route).length === 0){
-        let newLng = props.data[0].geometry.coordinates[0][0][0]
-        let newLat = props.data[0].geometry.coordinates[0][0][1]
+        let l = props.data.length
+        let newLng = props.data[l-1].geometry.coordinates[0][0][0]
+        let newLat = props.data[l-1].geometry.coordinates[0][0][1]
         map.setCenter([newLng, newLat])
         setLng(newLng)
         setLat(newLat)
@@ -187,8 +188,8 @@ const Map = (props) => {
   return (
     <div id='map-page-container'>
       <div className="sidebar-map">
-        <span>SW: {swLng} | {swLat}</span>
         <span>NE: {neLng} | {neLat}</span>
+        <span>SW: {swLng} | {swLat}</span>
         <span>C : {lng} | {lat}</span>
       </div>
       <div className='map-container' ref={mapContainerRef} />
