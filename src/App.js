@@ -14,6 +14,7 @@ const App = () => {
   const [length, setLength] = useState('')
   const [width, setWidth] = useState('')
   const [pickedRoute, setPickedRoute] = useState({})
+  const [slided, setSlided] = useState(false)
 
   const handleLngChange = (event) => setLng(Number(event.target.value))
   const handleLatChange = (event) => setLat(Number(event.target.value))
@@ -49,8 +50,9 @@ const App = () => {
           setLatestId(res.data[l-1].id)
         }
         setData(res.data)
+        setSlided(false)
       })
-  },[latestId, pickedRoute, length])
+  },[latestId, pickedRoute, slided])
   //
 
   //
@@ -67,7 +69,7 @@ const App = () => {
 
   //
   const handleSelect = (route) => (event) => {
-    console.log(route)
+    //console.log(route)
     setPickedRoute(route)
     //get length and width with a function instead
     let length = route.geometry.coordinates[0][1][0] - route.geometry.coordinates[0][0][0]
@@ -89,16 +91,40 @@ const App = () => {
   const handleEmpty = (event) => {
     event.preventDefault()
     setPickedRoute({})
+    setWidth('')
+    setLength('')
   }
   //
 
   //
-  const handleLength = (event, newLength) => setLength(newLength)
+  const handleLength = (event, newLength) =>
+  {
+    setSlided(true)
+    setLength(newLength)
+  }
+  //
+
+  //
+  const handleWidth = (event, newWidth) =>
+  {
+    setSlided(true)
+    setWidth(newWidth)
+  }
+  //
 
   return (
     <div className="main-page-container">
       <div id='map-form-routes-container'>
-        <Map data={data} route={pickedRoute} handleSave={handleSave} handleEmpty={handleEmpty} handleLength={handleLength} length={length}/>
+        <Map
+          data={data}
+          route={pickedRoute}
+          handleSave={handleSave}
+          handleEmpty={handleEmpty}
+          handleLength={handleLength}
+          length={length}
+          handleWidth={handleWidth}
+          width={width}
+        />
         <div id='app-form-routes-container'>
           <AddLines
             handleSubmit={handleSubmit}

@@ -17,11 +17,13 @@ const ControlBar = (props) => {
           <div id='controls-container'>
             <div className='slider-container'>
               <span className='slider-tag' >length</span>
-              <Slider value={props.length} onChange={props.handleLength} max={10}></Slider>
+              <Slider value={props.length} step={1} marks  onChange={props.handleLength} max={10}></Slider>
+              <span className='slider-value'>{Math.round(props.length)}</span>
             </div>
             <div className='slider-container'>
-              <span className='slider-tag' onChange={props.handleWidth}>width</span>
-              <Slider></Slider>
+              <span className='slider-tag'>width</span>
+              <Slider value={props.width} step={1} marks onChange={props.handleWidth} max={10}></Slider>
+              <span className='slider-value'>{Math.round(props.width)}</span>
             </div>
             <div className='slider-container'>
               <span>draw</span>

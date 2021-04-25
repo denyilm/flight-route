@@ -33,7 +33,7 @@ const AddLines = (props) => {
         length [lng] <input value={props.length} onChange={props.handleLengthChange} type='number' min='1' max='10'/>
         </div>
         <div className='add-line-input-wrapper'>
-        width [lat] <input value={props.width} onChange={props.handleWidthChange} type='number' min='1' max='5'/>
+        width [lat] <input value={props.width} onChange={props.handleWidthChange} type='number' min='1' max='10'/>
         </div>
         <button type='submit'>add</button>
       </form>

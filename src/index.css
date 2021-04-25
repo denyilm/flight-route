@@ -231,3 +231,7 @@ ControlBar
 .slider-tag {
   margin-right: 10px;
 }
+
+.slider-value{
+  margin-left: 10px;
+}

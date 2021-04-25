@@ -56,7 +56,7 @@ const Map = (props) => {
 
       //get length and width with a function instead
       setLength(props.length)
-      //setWidth(width)
+      setWidth(props.width)
 
       map.setCenter([newLng, newLat])
       setLng(newLng)
@@ -131,6 +131,22 @@ const Map = (props) => {
           popup.remove()
         })
       })
+      if(Object.keys(props.route).length > 0){
+        let pickedRoute_edited = map.getSource(sourceId)._data
+        let oldLng = pickedRoute_edited.geometry.coordinates[0][0][0]
+        let oldLat = pickedRoute_edited.geometry.coordinates[0][0][1]
+        //console.log(length)
+        let newCoord = [
+          [[oldLng, oldLat], [oldLng+length, oldLat]],
+          [[oldLng, oldLat+width], [oldLng+length, oldLat+width]]
+        ]
+        let data = createGeoJSON('', 'MultiLineString', newCoord)
+        map.getSource(sourceId).setData(data)
+        pickedRoute_edited =  map.getSource(sourceId)._data
+        pickedRoute_edited.id = pickedRoute.id
+        //console.log(pickedRoute_edited)
+        setModifiedPickedRoute(pickedRoute_edited)
+      }
     })
     //
 
@@ -150,7 +166,7 @@ const Map = (props) => {
         map.getSource(routeId).setData(data)
         let pickedRoute_edited =  map.getSource(routeId)._data
         pickedRoute_edited.id = pickedRoute.id
-        console.log(pickedRoute_edited)
+        //console.log(pickedRoute_edited)
         setModifiedPickedRoute(pickedRoute_edited)
       }
     })
@@ -158,12 +174,8 @@ const Map = (props) => {
 
     // Clean up on unmount
     return () => map.remove()
-  }, [canDraw, props.data, pickedRoute]) //
+  }, [canDraw, props.data, pickedRoute, length, width]) //
 
-  const handleLength = (event, newLength) => setLength(newLength)
-
-  //
-  //const allowMove = (event) => setAllow(!allow)
   //
   const handleDrawSwitch = (event) => setCanDraw(!canDraw)
 
@@ -185,6 +197,8 @@ const Map = (props) => {
         canDraw={canDraw}
         length={props.length}
         handleLength={props.handleLength}
+        width={props.width}
+        handleWidth={props.handleWidth}
       />
     </div>
   )
