@@ -1,14 +1,16 @@
 # How to run this app
 
-- git clone to your local directory
+- run the following at where you want to store the app: 
 
-- remove the .git file
+git clone https://github.com/denyilm/flight-route.git
 
-- run the install all the needed packages:
+- remove the .git file that is created in your local 'flight-route' directory
+
+- run the following to install the packages:
 
 npm install 
 
-- once all the packages installed run:
+- once all the packages are installed run:
 
 npm run server
 
