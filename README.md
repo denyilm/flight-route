@@ -14,7 +14,7 @@ npm install
 
 npm run server
 
-- once the json server is started, run:
+- once the json server is started run:
 
 npm start
 
