@@ -6,7 +6,11 @@
 
 - npm install to get all the packages
 
-- once all the packages installed run with:
+- once all the packages installed run:
+
+npm run server
+
+- once the json server is started, run:
 
 npm start
 
