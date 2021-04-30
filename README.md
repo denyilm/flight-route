@@ -1,10 +1,12 @@
-# How to run
+# How to run this app
 
 - git clone to your local directory
 
 - remove the .git file
 
-- npm install to get all the packages
+- run the install all the needed packages:
+
+npm install 
 
 - once all the packages installed run:
 
